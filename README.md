@@ -1,4 +1,4 @@
-# Foreman Default Hostgroup Plugin
+# Foreman Openstack Clustering Plugin
 
 This plugin adds a "New Openstack Cluster" button which creates two Hostgroups (one
 for the Controllers, one for the Computes) and uses a setup wizard to get required

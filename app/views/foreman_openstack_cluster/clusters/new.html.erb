@@ -1,0 +1,24 @@
+<%#= javascript 'host_edit' %>
+<% title _("New OpenStack Cluster") %>
+
+<%= form_for @hostgroup, :html => {:data => {:id => @hostgroup.try(:id)}} do |f| %>
+  <%= base_errors_for @hostgroup %>
+
+<ul class="nav nav-tabs" data-tabs="tabs">
+  <li class="active"><a href="#primary" data-toggle="tab"><%= _('Hostgroup') %></a></li>
+  <li><a href="#puppet_klasses" data-toggle="tab"><%= _('Puppet Classes') %></a></li>
+  <% if SETTINGS[:unattended] %>
+    <li><a href="#network" data-toggle="tab"><%= _('Network') %></a></li>
+  <li><a href="#os" data-toggle="tab"><%= _('Operating System') %></a></li>
+<% end %>
+  <li><a href="#params" id='params-tab' data-toggle="tab"><%= _('Parameters') %></a></li>
+  <% if show_location_tab? %>
+    <li><a href="#locations" data-toggle="tab"><%= _('Locations') %></a></li>
+<% end %>
+  <% if show_organization_tab? %>
+    <li><a href="#organizations" data-toggle="tab"><%= _('Organizations') %></a></li>
+<% end %>
+</ul>
+
+<%= submit_or_cancel f, false, {:cancel_path => hostgroups_path} %>
+ <% end %>

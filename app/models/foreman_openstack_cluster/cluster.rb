@@ -18,12 +18,8 @@ module ForemanOpenstackCluster
     end
     #### end Tableless
 
-    #column :bar, :string
-    #validates_presence_of :bar
-    
-    def model_name
-      self.class.model_name
-    end
+    column :domain_id, :integer
+    validates_presence_of :domain_id
 
   end
 end

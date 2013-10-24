@@ -6,6 +6,7 @@ module ForemanOpenstackCluster
   #Thus, inherits from ::Rails::Engine and not from Rails::Engine
   class Engine < ::Rails::Engine
 
+    #config.autoload_paths += Dir["#{config.root}/app/models/foreman_openstack_cluster"]
     config.autoload_paths += Dir["#{config.root}/app/controllers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/helpers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/models/concerns"]

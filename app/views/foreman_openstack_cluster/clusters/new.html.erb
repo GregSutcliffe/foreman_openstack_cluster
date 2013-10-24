@@ -3,9 +3,8 @@
 <%= form_for @cluster do |f| %>
   <%= base_errors_for @cluster %>
 
-  <%= f.fields_for :subnet, f.object.subnet do |sf| %>
-        <%= render 'subnets/fields', :f => sf %>
-    <% end %>
+  <%= select_f f, :domain_id, accessible_domains, :id, :to_label, {:include_blank => true},
+    {:help_inline => :indicator, :label => _("Domain") } %>
 
 <%= submit_or_cancel f, false, {:cancel_path => hostgroups_path} %>
  <% end %>

@@ -8,5 +8,15 @@ module ForemanOpenstackCluster
       @cluster = Cluster.new
     end
 
+    def create
+      @cluster = Cluster.new(params['foreman_openstack_cluster_cluster'])
+      if @cluster.save
+        Rails.logger.info "More code here please"
+      else
+        process_error :render => 'foreman_openstack_cluster/clusters/new', :object => @cluster
+      end
+    end
+
+
   end
 end

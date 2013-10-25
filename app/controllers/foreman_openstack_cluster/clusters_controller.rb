@@ -12,6 +12,7 @@ module ForemanOpenstackCluster
       @cluster = Cluster.new(params['foreman_openstack_cluster_cluster'])
       if @cluster.save
         Rails.logger.info "More code here please"
+        process_success({:success_redirect => hostgroups_path})
       else
         process_error :render => 'foreman_openstack_cluster/clusters/new', :object => @cluster
       end

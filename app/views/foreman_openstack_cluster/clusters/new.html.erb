@@ -1,10 +1,21 @@
+<%= javascript_include_tag "foreman_openstack_cluster/cluster", debug: true %>
+
 <% title _("New OpenStack Cluster") %>
 
 <%= form_for @cluster do |f| %>
   <%= base_errors_for @cluster %>
 
-  <%= select_f f, :domain_id, accessible_domains, :id, :to_label, {:include_blank => true},
-    {:help_inline => :indicator, :label => _("Domain") } %>
+<%= select_f f, :domain_id, accessible_domains, :id, :to_label, {:include_blank => true},
+  {:help_inline => :indicator, :label => _("Domain"),
+   :onchange => 'domain_selected(this);', :'data-url' => method_path('domain_selected') } %>
 
-<%= submit_or_cancel f, false, {:cancel_path => hostgroups_path} %>
- <% end %>
+ <span id="subnet_select">
+     <%= select_f f, :subnet_id, domain_subnets, :id, :title,
+       { :include_blank => domain_subnets.any? ? true : _("No subnets")},
+       { :disabled => domain_subnets.empty?,
+         :label => _("Subnet"), :help_inline => :indicator}
+       %>
+     </span>
+
+       <%= submit_or_cancel f, false, {:cancel_path => hostgroups_path} %>
+     <% end %>

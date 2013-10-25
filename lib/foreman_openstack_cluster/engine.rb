@@ -11,6 +11,10 @@ module ForemanOpenstackCluster
     config.autoload_paths += Dir["#{config.root}/app/helpers/concerns"]
     config.autoload_paths += Dir["#{config.root}/app/models/concerns"]
 
+    initializer :assets do |config|
+      Rails.application.config.assets.precompile += %w{ cluster.js }
+    end
+
     def use_relative_model_naming
       true
     end

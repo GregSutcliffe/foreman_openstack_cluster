@@ -20,7 +20,7 @@ module ForemanOpenstackCluster
       @cluster = Cluster.new(params['foreman_openstack_cluster_cluster'])
       if @cluster.save
         setup_quickstack "quickstack::controller"
-        setup_quickstack "quickstack::compute" 
+        setup_quickstack "quickstack::compute"
         process_success({:success_redirect => hostgroups_path})
       else
         process_error :render => 'foreman_openstack_cluster/clusters/new', :object => @cluster
@@ -41,18 +41,20 @@ module ForemanOpenstackCluster
       @hostgroup.organizations  = @parent.organizations
       # Clone any parameters as well
       @hostgroup.group_parameters.each{|param| @parent.group_parameters << param.dup}
+      @hostgroup.save
 
       # Add quickstack stuff
       @hostgroup.puppetclasses = [@qs_class]
+
+      condition = { 'environment_classes.puppetclass_id'=> @qs_class.id }
+      keys = LookupKey.smart_class_parameters.where(condition)
+
       params[:foreman_openstack_cluster_cluster].each do |k,v|
-        lk = Puppetclass.find_by_name(type).class_params.override.find_by_key(k)
+        lk = keys.where(:key => k).first
         next if lk.nil?
-        lv = LookupValue.find_or_initialize_by_match_and_lookup_key_id("hostgroup=#{@hostgroup.label}", lk.id)
-        lv.value = v
-        lv.save!
+        lk.lookup_values.create!( { :match => "hostgroup=#{@hostgroup.label}", :value => v } )
       end
       @hostgroup.save!
-      true
     end
 
     def set_keys pclass

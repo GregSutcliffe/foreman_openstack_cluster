@@ -47,9 +47,8 @@ module ForemanOpenstackCluster
       validates_presence_of k.to_sym
     end
 
-    def name
-      "Openstack Cluster"
-    end
+    column :name, :string
+    validates_presence_of :name
 
   end
 end

@@ -5,7 +5,10 @@
 <%= form_for @cluster do |f| %>
   <%= base_errors_for @cluster %>
 
-  <div class="control-group <%= 'error' if f.object.errors.any? %>">                                                                                                    
+  <div class="control-group <%= 'error' if f.object.errors.any? %>">
+
+    <%= f.label :name %>
+    <%= f.text_field :name %>
 
   <% @cluster.class.params.each do |k,v| %>
     <%= f.label k, :class => "span2" %>

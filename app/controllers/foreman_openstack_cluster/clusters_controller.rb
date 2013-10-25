@@ -32,9 +32,10 @@ module ForemanOpenstackCluster
     def setup_quickstack type
       @qs_class = Puppetclass.find_by_name(type)
       @parent   = Hostgroup.first #replace this with Dom's provisioning group
+      name      = "#{params[:foreman_openstack_cluster_cluster][:name]} #{type.split('::').last.capitalize}"
 
       # Borrowed from Hostgroup#nest
-      @hostgroup                = Hostgroup.find_or_create_by_name(type.split('::').map{|a| a.capitalize}.join(' '))
+      @hostgroup                = Hostgroup.find_or_create_by_name(name)
       @hostgroup.environment_id = @parent.environment_id
       @hostgroup.parent_id      = @parent.id
       @hostgroup.locations      = @parent.locations

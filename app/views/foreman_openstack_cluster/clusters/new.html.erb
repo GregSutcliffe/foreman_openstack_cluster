@@ -11,6 +11,8 @@
 
   <%= select_f f, :hostgroup_id, Hostgroup.all, :id, :to_label, {}, :label => _("Parent host group"), :help_inline => _("Create cluster children under this provisioning host group") %>
 
+  <%= select_f f, :environment_id, @environments, :id, :name, {}, :label => _("Environment") %>
+
   <% @cluster.class.params.each do |k,v| %>
     <%= text_f f, k, :class => "span5" %>
   <% end %>

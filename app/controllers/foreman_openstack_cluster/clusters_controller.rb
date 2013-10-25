@@ -1,9 +1,9 @@
 module ForemanOpenstackCluster
   class ClustersController < ::ApplicationController
 
+    before_filter :find_puppetclasses
+
     def new
-      @controller_class = Puppetclass.find_by_name('quickstack::controller')
-      @compute_class    = Puppetclass.find_by_name('quickstack::compute')
       not_found and return unless ( @controller_class && @compute_class )
 
       # Setup the override keys on the classes ahead of time
@@ -19,7 +19,7 @@ module ForemanOpenstackCluster
     def create
       @cluster = Cluster.new(params['foreman_openstack_cluster_cluster'])
       if @cluster.save
-        clusterhg = create_hostgroup @cluster.hostgroup, @cluster.name
+        clusterhg = create_hostgroup @cluster.hostgroup, @cluster.name, @cluster.environment
         setup_quickstack clusterhg, "quickstack::controller"
         setup_quickstack clusterhg, "quickstack::compute"
         process_success({:success_redirect => hostgroups_path})
@@ -30,12 +30,19 @@ module ForemanOpenstackCluster
 
     private
 
-    def create_hostgroup parent, name
+    def find_puppetclasses
+      @controller_class = Puppetclass.find_by_name('quickstack::controller')
+      @compute_class    = Puppetclass.find_by_name('quickstack::compute')
+      @environments     = @controller_class.environments & @compute_class.environments
+    end
+
+    def create_hostgroup parent, name, environment = nil
       # Borrowed from Hostgroup#nest
       hostgroup                = Hostgroup.find_by_name(name)
       hostgroup                ||= parent.dup
       hostgroup.name           = name
       hostgroup.parent_id      = parent.id
+      hostgroup.environment_id = environment.id if environment.present?
       hostgroup.locations      = parent.locations
       hostgroup.organizations  = parent.organizations
       # Clone any parameters as well

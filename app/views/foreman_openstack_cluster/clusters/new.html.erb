@@ -5,17 +5,14 @@
 <%= form_for @cluster do |f| %>
   <%= base_errors_for @cluster %>
 
-<%= select_f f, :domain_id, accessible_domains, :id, :to_label, {:include_blank => true},
-  {:help_inline => :indicator, :label => _("Domain"),
-   :onchange => 'domain_selected(this);', :'data-url' => method_path('domain_selected') } %>
+  <div class="control-group <%= 'error' if f.object.errors.any? %>">                                                                                                    
 
- <span id="subnet_select">
-     <%= select_f f, :subnet_id, domain_subnets, :id, :title,
-       { :include_blank => domain_subnets.any? ? true : _("No subnets")},
-       { :disabled => domain_subnets.empty?,
-         :label => _("Subnet"), :help_inline => :indicator}
-       %>
-     </span>
+  <% @cluster.class.params.each do |k,v| %>
+    <%= f.label k, :class => "span2" %>
+    <%= f.text_field k, :class => "span5" %>
+  <% end %>
 
-       <%= submit_or_cancel f, false, {:cancel_path => hostgroups_path} %>
-     <% end %>
+  </div>
+
+  <%= submit_or_cancel f, false, {:cancel_path => hostgroups_path} %>
+<% end %>

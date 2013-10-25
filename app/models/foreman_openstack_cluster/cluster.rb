@@ -50,5 +50,8 @@ module ForemanOpenstackCluster
     column :name, :string
     validates_presence_of :name
 
+    column :hostgroup_id, :string
+    belongs_to :hostgroup
+
   end
 end

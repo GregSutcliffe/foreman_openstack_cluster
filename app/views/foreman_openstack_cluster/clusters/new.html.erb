@@ -9,6 +9,8 @@
 
   <%= text_f f, :name, :label => _("Cluster name"), :help_inline => _("Enter a unique name for this Openstack cluster") %>
 
+  <%= select_f f, :hostgroup_id, Hostgroup.all, :id, :to_label, {}, :label => _("Parent host group"), :help_inline => _("Create cluster children under this provisioning host group") %>
+
   <% @cluster.class.params.each do |k,v| %>
     <%= text_f f, k, :class => "span5" %>
   <% end %>

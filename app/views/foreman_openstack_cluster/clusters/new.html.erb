@@ -7,12 +7,14 @@
 
   <div class="control-group <%= 'error' if f.object.errors.any? %>">
 
-    <%= f.label :name %>
-    <%= f.text_field :name %>
+  <%= text_f f, :name, :label => _("Cluster name"), :help_inline => _("Enter a unique name for this Openstack cluster") %>
+
+  <%= select_f f, :hostgroup_id, Hostgroup.all, :id, :to_label, {}, :label => _("Parent host group"), :help_inline => _("Create cluster children under this provisioning host group") %>
+
+  <%= select_f f, :environment_id, @environments, :id, :name, {}, :label => _("Environment") %>
 
   <% @cluster.class.params.each do |k,v| %>
-    <%= f.label k, :class => "span2" %>
-    <%= f.text_field k, :class => "span5" %>
+    <%= text_f f, k, :class => "span5" %>
   <% end %>
 
   </div>

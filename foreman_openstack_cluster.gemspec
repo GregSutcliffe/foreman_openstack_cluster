@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.licenses = ["GPL-3"]
   s.summary = %q{Openstack Clustering Plugin for Foreman}
 
-  s.add_dependency "deface"
+  s.add_dependency "deface", "< 1.0"
 end

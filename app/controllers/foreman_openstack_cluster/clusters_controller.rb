@@ -33,7 +33,7 @@ module ForemanOpenstackCluster
     def find_puppetclasses
       @controller_class = Puppetclass.find_by_name('quickstack::controller')
       @compute_class    = Puppetclass.find_by_name('quickstack::compute')
-      @environments     = @controller_class.environments & @compute_class.environments
+      @environments     = @controller_class.environments & @compute_class.environments if @controller_class && @compute_class
     end
 
     def create_hostgroup parent, name, environment = nil

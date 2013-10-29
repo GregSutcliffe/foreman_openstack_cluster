@@ -65,7 +65,7 @@ module ForemanOpenstackCluster
           :description => 'The IP on the private network to be used as a virtual IP'
     param :name => 'pacemaker_pub_floating_ip',  :placeholder => '192.168.1.2',
           :description => 'The IP on the public network to be used as a virtual IP'
-    param :name => 'admin_email',                :default => 'admin@#{Facter.domain}',
+    param :name => 'admin_email',                :default => "admin@#{Facter.domain}",
           :description => 'Contact email for the cluster'
 
     param :name => 'admin_password',       :default => SecureRandom.hex, :advanced => true

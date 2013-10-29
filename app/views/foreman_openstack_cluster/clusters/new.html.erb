@@ -9,7 +9,7 @@
 
   <%= select_f f, :hostgroup_id, Hostgroup.all, :id, :to_label, {}, :label => _("Parent host group"), :help_inline => _("Create cluster children under this provisioning host group") %>
 
-  <%= select_f f, :environment_id, @environments, :id, :name, {}, :label => _("Environment") %>
+  <%= select_f f, :environment_id, @environments, :id, :name, {}, :label => _("Environment"), :help_inline => _("The Puppet environment containing the Quickstack classes") %>
 
   <ul class="nav nav-tabs" data-tabs="tabs">
     <li class="active"><a href="#basic" data-toggle="tab"><%= _('Basic Params') %></a></li>
@@ -18,12 +18,12 @@
   <div class="tab-content">
     <div class="tab-pane active" id="basic">
       <% @cluster.class.basic_params.each do |k,v| %>
-        <%= text_f f, k, :class => "span5" %>
+        <%= param_field(f, k, v) %>
     <% end %>
     </div>
     <div class="tab-pane" id="passwords">
-      <% @cluster.class.password_params.each do |k,v| %>
-        <%= text_f f, k, :class => "span5" %>
+      <% @cluster.class.advanced_params.each do |k,v| %>
+        <%= param_field(f, k, v) %>
     <% end %>
     </div>
 

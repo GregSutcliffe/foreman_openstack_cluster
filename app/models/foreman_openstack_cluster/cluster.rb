@@ -18,51 +18,7 @@ module ForemanOpenstackCluster
     end
     #### end Tableless
 
-    def self.params
-      @params ||= {};
-    end
-
-    def self.param(name, default, type = :string, advanced = nil)
-      params.merge! name => { :default => default,
-                              :type => type,
-                              :advanced => advanced.present?
-      }
-    end
-
-    param "verbose",                    "true",                  :boolean
-    param "private_interface",          'PRIV_INTERFACE'
-    param "public_interface",           'PUB_INTERFACE'
-    param "fixed_network_range",        'PRIV_RANGE'
-    param "floating_network_range",     'PUB_RANGE'
-    param "pacemaker_priv_floating_ip", 'PRIV_IP'
-    param "pacemaker_pub_floating_ip",  'PUB_IP'
-    param "admin_email",                "admin@#{Facter.domain}"
-
-    param "admin_password",       SecureRandom.hex, nil, true
-    param "cinder_db_password",   SecureRandom.hex, nil, true
-    param "cinder_user_password", SecureRandom.hex, nil, true
-    param "glance_db_password",   SecureRandom.hex, nil, true
-    param "glance_user_password", SecureRandom.hex, nil, true
-    param "horizon_secret_key",   SecureRandom.hex, nil, true
-    param "keystone_admin_token", SecureRandom.hex, nil, true
-    param "keystone_db_password", SecureRandom.hex, nil, true
-    param "mysql_root_password",  SecureRandom.hex, nil, true
-    param "nova_db_password",     SecureRandom.hex, nil, true
-    param "nova_user_password",   SecureRandom.hex, nil, true
-
-    def self.basic_params
-      Rails.logger.info params.inspect
-      params.reject {|p,d| d[:advanced].present? }
-    end
-
-    def self.password_params
-      params.reject {|p,d| d[:advanced].blank? }
-    end
-
-    params.each do |k,v|
-      column k.to_sym, v[:type]
-      validates_presence_of k.to_sym
-    end
+    # Basic Validations
 
     column :name, :string
     validates_presence_of :name
@@ -72,6 +28,67 @@ module ForemanOpenstackCluster
 
     column :environment_id, :integer
     belongs_to :environment
+
+    # Class parameters to be supplied
+
+    def self.params
+      @params ||= {};
+    end
+
+    def self.param args
+      name = args[:name] || return
+      default = args[:default] || ''
+      type = args[:type] || :string
+      advanced = args[:advanced].present? ? true : false
+
+      params.merge! name => { :default     => default,
+                              :type        => type,
+                              :placeholder => args[:placeholder],
+                              :description => args[:description],
+                              :advanced    => advanced }
+
+      column name.to_sym, type
+      validates_presence_of name.to_sym
+    end
+
+    param :name => 'verbose', :default => 'true', :type => :boolean
+
+    param :name => 'private_interface',          :placeholder => 'eth0',
+          :description => 'The private interface of the Foreman host'
+    param :name => 'public_interface',           :placeholder => 'eth1',
+          :description => 'The public interface of the Foreman host'
+    param :name => 'fixed_network_range',        :placeholder => '10.1.1.0/24',
+          :description => 'The fixed network range internal to OpenStack'
+    param :name => 'floating_network_range',     :placeholder => '192.168.1.1/24',
+          :description => 'The floating network range OpenStack will use to assign IPs'
+    param :name => 'pacemaker_priv_floating_ip', :placeholder => '10.1.1.2',
+          :description => 'The IP on the private network to be used as a virtual IP'
+    param :name => 'pacemaker_pub_floating_ip',  :placeholder => '192.168.1.2',
+          :description => 'The IP on the public network to be used as a virtual IP'
+    param :name => 'admin_email',                :default => 'admin@#{Facter.domain}',
+          :description => 'Contact email for the cluster'
+
+    param :name => 'admin_password',       :default => SecureRandom.hex, :advanced => true
+    param :name => 'cinder_db_password',   :default => SecureRandom.hex, :advanced => true
+    param :name => 'cinder_user_password', :default => SecureRandom.hex, :advanced => true
+    param :name => 'glance_db_password',   :default => SecureRandom.hex, :advanced => true
+    param :name => 'glance_user_password', :default => SecureRandom.hex, :advanced => true
+    param :name => 'horizon_secret_key',   :default => SecureRandom.hex, :advanced => true
+    param :name => 'keystone_admin_token', :default => SecureRandom.hex, :advanced => true
+    param :name => 'keystone_db_password', :default => SecureRandom.hex, :advanced => true
+    param :name => 'mysql_root_password',  :default => SecureRandom.hex, :advanced => true
+    param :name => 'nova_db_password',     :default => SecureRandom.hex, :advanced => true
+    param :name => 'nova_user_password',   :default => SecureRandom.hex, :advanced => true
+
+    # Helpers for the two types of params
+
+    def self.basic_params
+      params.reject {|p,d| d[:advanced].present? }
+    end
+
+    def self.advanced_params
+      params.reject {|p,d| d[:advanced].blank? }
+    end
 
   end
 end

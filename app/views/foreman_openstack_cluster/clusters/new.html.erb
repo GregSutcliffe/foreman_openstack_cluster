@@ -1,11 +1,9 @@
-<%= javascript_include_tag "foreman_openstack_cluster/cluster", debug: true %>
-
 <% title _("New OpenStack Cluster") %>
 
 <%= form_for @cluster do |f| %>
   <%= base_errors_for @cluster %>
 
-  <div class="control-group <%= 'error' if f.object.errors.any? %>">
+<div class="control-group <%= 'error' if f.object.errors.any? %>">
 
   <%= text_f f, :name, :label => _("Cluster name"), :help_inline => _("Enter a unique name for this Openstack cluster") %>
 
@@ -13,9 +11,22 @@
 
   <%= select_f f, :environment_id, @environments, :id, :name, {}, :label => _("Environment") %>
 
-  <% @cluster.class.params.each do |k,v| %>
-    <%= text_f f, k, :class => "span5" %>
-  <% end %>
+  <ul class="nav nav-tabs" data-tabs="tabs">
+    <li class="active"><a href="#basic" data-toggle="tab"><%= _('Basic Params') %></a></li>
+    <li><a href="#passwords" data-toggle="tab"><%= _('Passwords') %></a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="basic">
+      <% @cluster.class.basic_params.each do |k,v| %>
+        <%= text_f f, k, :class => "span5" %>
+    <% end %>
+    </div>
+    <div class="tab-pane" id="passwords">
+      <% @cluster.class.password_params.each do |k,v| %>
+        <%= text_f f, k, :class => "span5" %>
+    <% end %>
+    </div>
+
 
   </div>
 

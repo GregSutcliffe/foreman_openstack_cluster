@@ -19,9 +19,8 @@ module ForemanOpenstackCluster
     def create
       @cluster = Cluster.new(params['foreman_openstack_cluster_cluster'])
       if @cluster.save
-        clusterhg = create_hostgroup @cluster.hostgroup, @cluster.name, @cluster.environment
-        setup_quickstack clusterhg, "quickstack::controller"
-        setup_quickstack clusterhg, "quickstack::compute"
+        setup_quickstack @cluster.hostgroup, @cluster.name, @cluster.environment, "quickstack::controller"
+        setup_quickstack @cluster.hostgroup, @cluster.name, @cluster.environment, "quickstack::compute"
         process_success({:success_redirect => hostgroups_path})
       else
         process_error :render => 'foreman_openstack_cluster/clusters/new', :object => @cluster
@@ -51,10 +50,10 @@ module ForemanOpenstackCluster
       hostgroup
     end
 
-    def setup_quickstack parent, type
+    def setup_quickstack parent, name, environment, type
       @qs_class = Puppetclass.find_by_name(type)
-      name      = type.split('::').last.capitalize
-      hostgroup = create_hostgroup(parent, name)
+      name      = "#{name.capitalize} #{type.split('::').last.capitalize}"
+      hostgroup = create_hostgroup(parent, name, environment)
 
       # Add quickstack stuff
       hostgroup.puppetclasses = [@qs_class]

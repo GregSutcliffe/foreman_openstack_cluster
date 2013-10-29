@@ -19,30 +19,47 @@ module ForemanOpenstackCluster
     #### end Tableless
 
     def self.params
-      {
-        "verbose"                    => { :default => "true", :type => :boolean },
-        "admin_password"             => { :default => SecureRandom.hex, :type => :string },
-        "cinder_db_password"         => { :default => SecureRandom.hex, :type => :string },
-        "cinder_user_password"       => { :default => SecureRandom.hex, :type => :string },
-        "glance_db_password"         => { :default => SecureRandom.hex, :type => :string },
-        "glance_user_password"       => { :default => SecureRandom.hex, :type => :string },
-        "horizon_secret_key"         => { :default => SecureRandom.hex, :type => :string },
-        "keystone_admin_token"       => { :default => SecureRandom.hex, :type => :string },
-        "keystone_db_password"       => { :default => SecureRandom.hex, :type => :string },
-        "mysql_root_password"        => { :default => SecureRandom.hex, :type => :string },
-        "nova_db_password"           => { :default => SecureRandom.hex, :type => :string },
-        "nova_user_password"         => { :default => SecureRandom.hex, :type => :string },
-        "private_interface"          => { :default => 'PRIV_INTERFACE', :type => :string },
-        "public_interface"           => { :default => 'PUB_INTERFACE', :type => :string },
-        "fixed_network_range"        => { :default => 'PRIV_RANGE', :type => :string },
-        "floating_network_range"     => { :default => 'PUB_RANGE', :type => :string },
-        "pacemaker_priv_floating_ip" => { :default => 'PRIV_IP', :type => :string },
-        "pacemaker_pub_floating_ip"  => { :default => 'PUB_IP', :type => :string },
-        "admin_email"                => { :default => "admin@#{Facter.domain}", :type => :string }
+      @params ||= {};
+    end
+
+    def self.param(name, default, type = :string, advanced = nil)
+      params.merge! name => { :default => default,
+                              :type => type,
+                              :advanced => advanced.present?
       }
     end
 
-    self.params.each do |k,v|
+    param "verbose",                    "true",                  :boolean
+    param "private_interface",          'PRIV_INTERFACE'
+    param "public_interface",           'PUB_INTERFACE'
+    param "fixed_network_range",        'PRIV_RANGE'
+    param "floating_network_range",     'PUB_RANGE'
+    param "pacemaker_priv_floating_ip", 'PRIV_IP'
+    param "pacemaker_pub_floating_ip",  'PUB_IP'
+    param "admin_email",                "admin@#{Facter.domain}"
+
+    param "admin_password",       SecureRandom.hex, nil, true
+    param "cinder_db_password",   SecureRandom.hex, nil, true
+    param "cinder_user_password", SecureRandom.hex, nil, true
+    param "glance_db_password",   SecureRandom.hex, nil, true
+    param "glance_user_password", SecureRandom.hex, nil, true
+    param "horizon_secret_key",   SecureRandom.hex, nil, true
+    param "keystone_admin_token", SecureRandom.hex, nil, true
+    param "keystone_db_password", SecureRandom.hex, nil, true
+    param "mysql_root_password",  SecureRandom.hex, nil, true
+    param "nova_db_password",     SecureRandom.hex, nil, true
+    param "nova_user_password",   SecureRandom.hex, nil, true
+
+    def self.basic_params
+      Rails.logger.info params.inspect
+      params.reject {|p,d| d[:advanced].present? }
+    end
+
+    def self.password_params
+      params.reject {|p,d| d[:advanced].blank? }
+    end
+
+    params.each do |k,v|
       column k.to_sym, v[:type]
       validates_presence_of k.to_sym
     end

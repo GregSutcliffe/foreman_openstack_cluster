@@ -48,10 +48,10 @@ module ForemanOpenstackCluster
                               :advanced    => advanced }
 
       column name.to_sym, type
-      validates_presence_of name.to_sym
+      validates_presence_of name.to_sym unless type == :boolean
     end
 
-    param :name => 'verbose', :default => 'true', :type => :boolean
+    param :name => 'verbose', :default => true, :type => :boolean
 
     param :name => 'private_interface',          :placeholder => 'eth0',
           :description => 'The private interface of the Foreman host'

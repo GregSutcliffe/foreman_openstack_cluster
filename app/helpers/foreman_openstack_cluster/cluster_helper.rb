@@ -4,9 +4,13 @@ module ForemanOpenstackCluster
       send("#{method}_hostgroups_path")
     end
     def param_field f, name, data
-      text_f f, name, :class => "span5",
-        :placeholder => data[:placeholder],
-        :help_inline => data[:description]
+      if data[:type] == :boolean
+        checkbox_f f, name, :checked => data[:default]
+      else
+        text_f f, name, :class => "span5",
+          :placeholder => data[:placeholder],
+          :help_inline => data[:description]
+      end
     end
 
   end

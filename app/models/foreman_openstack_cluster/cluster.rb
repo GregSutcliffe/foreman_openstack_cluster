@@ -29,6 +29,8 @@ module ForemanOpenstackCluster
     column :environment_id, :integer
     belongs_to :environment
 
+    attr_accessor :public_subnet, :private_subnet
+
     # Class parameters to be supplied
 
     def self.params

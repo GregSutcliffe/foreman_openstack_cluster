@@ -17,6 +17,16 @@ module ForemanOpenstackCluster
     end
 
     def create
+      if params[:foreman_openstack_cluster_cluster][:public_subnet]
+        @pub_s  = Subnet.new(params[:foreman_openstack_cluster_cluster][:public_subnet])
+        @pub_s.save!   # Replace these with proper error handling...
+      end
+
+      if params[:foreman_openstack_cluster_cluster][:private_subnet]
+        @priv_s = Subnet.new(params[:foreman_openstack_cluster_cluster][:private_subnet])
+        @priv_s.save!
+      end
+
       @cluster = Cluster.new(params['foreman_openstack_cluster_cluster'])
       if @cluster.save
         setup_quickstack @cluster.hostgroup, @cluster.name, @cluster.environment, "quickstack::controller"

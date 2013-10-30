@@ -6,29 +6,49 @@
 
 <div class="control-group <%= 'error' if f.object.errors.any? %>">
 
-  <%= text_f f, :name, :label => _("Cluster name"), :help_inline => _("Enter a unique name for this Openstack cluster") %>
+  <%= text_f f, :name, :label => _("Cluster name"), :help_inline => _("Enter a unique name for this Openstack cluster"), :onchange => "cluster_selected(this)"  %>
 
   <%= select_f f, :hostgroup_id, Hostgroup.all, :id, :to_label, {}, :label => _("Parent host group"), :help_inline => _("Create cluster children under this provisioning host group") %>
 
   <%= select_f f, :environment_id, @environments, :id, :name, {}, :label => _("Environment"), :help_inline => _("The Puppet environment containing the Quickstack classes") %>
 
+  <%# Nested subnet forms in tabs are awesome %>
   <ul class="nav nav-tabs" data-tabs="tabs">
-    <li class="active"><a href="#basic" data-toggle="tab"><%= _('Basic Params') %></a></li>
+    <li class="active"><a href="#public" data-toggle="tab"><%= _('Public Openstack Subnet') %></a></li>
+    <li><a href="#private" data-toggle="tab"><%= _('Private Openstack Subnet') %></a></li>
+    <li><a href="#params" data-toggle="tab"><%= _('Parameters') %></a></li>
     <li><a href="#passwords" data-toggle="tab"><%= _('Passwords') %></a></li>
   </ul>
+
   <div class="tab-content">
-    <div class="tab-pane active" id="basic">
+    <div class="tab-pane active" id="public">
+      <h4><%= _("Public Subnet") %></h4>
+      <p>
+        <%= _("Enter details for the public network range which Openstack will use to attach floating IPs to instances.") %>
+      </p>
+      <%= f.fields_for :public_subnet, f.object.subnet do |sf| %>
+        <%= render 'subnets/fields', :f => sf %>
+      <% end %>
+    </div>
+    <div class="tab-pane" id="private">
+      <h4><%= _("Private Subnet") %></h4>
+      <p>
+        <%= _("Enter details for the private internal network range for Openstack.") %>
+      </p>
+      <%= f.fields_for :private_subnet, f.object.subnet do |sf| %>
+        <%= render 'subnets/fields', :f => sf %>
+      <% end %>
+    </div>
+    <div class="tab-pane" id="params">
       <% @cluster.class.basic_params.each do |k,v| %>
         <%= param_field(f, k, v) %>
-    <% end %>
+      <% end %>
     </div>
     <div class="tab-pane" id="passwords">
       <% @cluster.class.advanced_params.each do |k,v| %>
         <%= param_field(f, k, v) %>
-    <% end %>
+      <% end %>
     </div>
-
-
   </div>
 
   <%= submit_or_cancel f, false, {:cancel_path => hostgroups_path} %>

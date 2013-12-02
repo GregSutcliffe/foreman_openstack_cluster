@@ -15,6 +15,11 @@ module ForemanOpenstackCluster
       Rails.application.config.assets.precompile += %w{ cluster.js }
     end
 
+    initializer 'foreman_openstack_cluster.register_plugin', :after=> :finisher_hook do |app|
+      Foreman::Plugin.register :foreman_openstack_cluster do
+      end if defined? Foreman::Plugin
+    end
+
     def use_relative_model_naming
       true
     end

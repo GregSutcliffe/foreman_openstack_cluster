@@ -1,3 +1,7 @@
+# UNMAINTAINED - NOT SUITABLE FOR RECENT FOREMAN VERSIONS
+
+The code is retained for posterity / historical interest, but it's outdated and no longer useful with Foreman.
+
 # Foreman Openstack Clustering Plugin
 
 This plugin adds a "New Openstack Cluster" button which creates two Hostgroups (one
